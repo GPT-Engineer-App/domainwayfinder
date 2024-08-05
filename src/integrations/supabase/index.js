@@ -48,10 +48,10 @@ const fromSupabase = async (query) => {
 | domain_id   | integer                  | number | true     |
 | name        | text                     | string | true     |
 | description | text                     | string | false    |
-| created_at  | timestamp with time zone | string | false    |
-| updated_at  | timestamp with time zone | string | false    |
-| created_by  | integer                  | number | false    |
-| views       | integer                  | number | false    |
+| created_at  | timestamp with time zone | string | true     |
+| updated_at  | timestamp with time zone | string | true     |
+| created_by  | integer                  | number | true     |
+| views       | integer                  | number | true     |
 
 ### users
 
