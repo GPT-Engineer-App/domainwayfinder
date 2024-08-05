@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { useQuery, useMutation, useQueryClient, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const supabaseUrl = 'https://yikgsmwivhpchmupolcw.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlpa2dzbXdpdmhwY2htdXBvbGN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjI4NjU0MDMsImV4cCI6MjAzODQ0MTQwM30.v9J_W-BwYucTY61d-23mSfiDmQhgD7a6oFJzHIwOfnA';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_PROJECT_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_API_KEY;
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 import React from "react";
@@ -19,155 +19,53 @@ const fromSupabase = async (query) => {
 
 /* supabase integration types
 
-### perspectives
+// EXAMPLE TYPES SECTION
+// DO NOT USE TYPESCRIPT
 
-| name      | type   | format | required |
-|-----------|--------|--------|----------|
-| id        | int8   | number | true     |
-| domain_id | int8   | number | true     |
-| name      | text   | string | false    |
-| data      | jsonb  | json   | false    |
+### foos
 
-### users
+| name    | type | format | required |
+|---------|------|--------|----------|
+| id      | int8 | number | true     |
+| title   | text | string | true     |
+| date    | date | string | true     |
 
-| name     | type | format | required |
-|----------|------|--------|----------|
-| id       | int8 | number | true     |
-| username | text | string | false    |
-| email    | text | string | false    |
-| password | text | string | false    |
+### bars
 
-### domains
-
-| name         | type   | format | required |
-|--------------|--------|--------|----------|
-| id           | int8   | number | true     |
-| name         | text   | string | false    |
-| type         | text   | string | false    |
-| description  | text   | string | false    |
-| perspectives | jsonb  | json   | false    |
-
+| name    | type | format | required |
+|---------|------|--------|----------|
+| id      | int8 | number | true     |
+| foo_id  | int8 | number | true     |  // foreign key to foos
+	
 */
 
-// Perspectives hooks
-export const usePerspectives = () => useQuery({
-    queryKey: ['perspectives'],
-    queryFn: () => fromSupabase(supabase.from('perspectives').select('*')),
-});
+// Example hook for models
 
-export const usePerspective = (id) => useQuery({
-    queryKey: ['perspectives', id],
-    queryFn: () => fromSupabase(supabase.from('perspectives').select('*').eq('id', id).single()),
-});
-
-export const useAddPerspective = () => {
+export const useFoo = ()=> useQuery({
+    queryKey: ['foos'],
+    queryFn: fromSupabase(supabase.from('foos')),
+})
+export const useAddFoo = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newPerspective) => fromSupabase(supabase.from('perspectives').insert([newPerspective])),
-        onSuccess: () => {
-            queryClient.invalidateQueries('perspectives');
+        mutationFn: (newFoo)=> fromSupabase(supabase.from('foos').insert([{ title: newFoo.title }])),
+        onSuccess: ()=> {
+            queryClient.invalidateQueries('foos');
         },
     });
 };
 
-export const useUpdatePerspective = () => {
+export const useBar = ()=> useQuery({
+    queryKey: ['bars'],
+    queryFn: fromSupabase(supabase.from('bars')),
+})
+export const useAddBar = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('perspectives').update(updateData).eq('id', id)),
-        onSuccess: () => {
-            queryClient.invalidateQueries('perspectives');
+        mutationFn: (newBar)=> fromSupabase(supabase.from('bars').insert([{ foo_id: newBar.foo_id }])),
+        onSuccess: ()=> {
+            queryClient.invalidateQueries('bars');
         },
     });
 };
 
-export const useDeletePerspective = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (id) => fromSupabase(supabase.from('perspectives').delete().eq('id', id)),
-        onSuccess: () => {
-            queryClient.invalidateQueries('perspectives');
-        },
-    });
-};
-
-// Users hooks
-export const useUsers = () => useQuery({
-    queryKey: ['users'],
-    queryFn: () => fromSupabase(supabase.from('users').select('*')),
-});
-
-export const useUser = (id) => useQuery({
-    queryKey: ['users', id],
-    queryFn: () => fromSupabase(supabase.from('users').select('*').eq('id', id).single()),
-});
-
-export const useAddUser = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (newUser) => fromSupabase(supabase.from('users').insert([newUser])),
-        onSuccess: () => {
-            queryClient.invalidateQueries('users');
-        },
-    });
-};
-
-export const useUpdateUser = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('users').update(updateData).eq('id', id)),
-        onSuccess: () => {
-            queryClient.invalidateQueries('users');
-        },
-    });
-};
-
-export const useDeleteUser = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (id) => fromSupabase(supabase.from('users').delete().eq('id', id)),
-        onSuccess: () => {
-            queryClient.invalidateQueries('users');
-        },
-    });
-};
-
-// Domains hooks
-export const useDomains = () => useQuery({
-    queryKey: ['domains'],
-    queryFn: () => fromSupabase(supabase.from('domains').select('*')),
-});
-
-export const useDomain = (id) => useQuery({
-    queryKey: ['domains', id],
-    queryFn: () => fromSupabase(supabase.from('domains').select('*').eq('id', id).single()),
-});
-
-export const useAddDomain = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (newDomain) => fromSupabase(supabase.from('domains').insert([newDomain])),
-        onSuccess: () => {
-            queryClient.invalidateQueries('domains');
-        },
-    });
-};
-
-export const useUpdateDomain = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('domains').update(updateData).eq('id', id)),
-        onSuccess: () => {
-            queryClient.invalidateQueries('domains');
-        },
-    });
-};
-
-export const useDeleteDomain = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: (id) => fromSupabase(supabase.from('domains').delete().eq('id', id)),
-        onSuccess: () => {
-            queryClient.invalidateQueries('domains');
-        },
-    });
-};
