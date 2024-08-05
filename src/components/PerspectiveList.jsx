@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { getFileUrl } from "../integrations/supabase/index";
 
 const PerspectiveList = ({ perspectives, onUpdatePerspective, onDeletePerspective }) => {
@@ -42,7 +43,25 @@ const PerspectiveList = ({ perspectives, onUpdatePerspective, onDeletePerspectiv
               <h3 className="text-lg font-semibold mb-2">{perspective.name}</h3>
               <p className="mb-2">{perspective.description}</p>
               <Button onClick={() => handleEditClick(perspective)} className="mr-2">Edit</Button>
-              <Button onClick={() => onDeletePerspective(perspective.id)} variant="destructive">Delete</Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive">Delete</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the perspective and all its associated data.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => onDeletePerspective(perspective.id)}>
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
               {perspective.files && perspective.files.length > 0 && (
                 <div className="mt-2">
                   <h4 className="font-semibold">Files:</h4>

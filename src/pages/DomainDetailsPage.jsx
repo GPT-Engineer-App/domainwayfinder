@@ -46,6 +46,10 @@ const DomainDetailsPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["domain", id] });
     },
+    onError: (error) => {
+      console.error("Failed to update perspective:", error);
+      // Add toast notification for error
+    },
   });
 
   const deletePerspectiveMutation = useMutation({
@@ -53,12 +57,20 @@ const DomainDetailsPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["domain", id] });
     },
+    onError: (error) => {
+      console.error("Failed to delete perspective:", error);
+      // Add toast notification for error
+    },
   });
 
   const addPerspectiveMutation = useMutation({
     mutationFn: addPerspective,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["domain", id] });
+    },
+    onError: (error) => {
+      console.error("Failed to add perspective:", error);
+      // Add toast notification for error
     },
   });
 
@@ -85,15 +97,29 @@ const DomainDetailsPage = () => {
   };
 
   const handleUpdatePerspective = (perspectiveId, updates) => {
-    updatePerspectiveMutation.mutate({ id: perspectiveId, updates });
+    updatePerspectiveMutation.mutate({ id: perspectiveId, updates }, {
+      onSuccess: () => {
+        // Add toast notification for success
+      },
+    });
   };
 
   const handleDeletePerspective = (perspectiveId) => {
-    deletePerspectiveMutation.mutate(perspectiveId);
+    if (window.confirm("Are you sure you want to delete this perspective?")) {
+      deletePerspectiveMutation.mutate(perspectiveId, {
+        onSuccess: () => {
+          // Add toast notification for success
+        },
+      });
+    }
   };
 
   const handleAddPerspective = (newPerspective) => {
-    addPerspectiveMutation.mutate({ domainId: id, ...newPerspective });
+    addPerspectiveMutation.mutate({ domainId: id, ...newPerspective }, {
+      onSuccess: () => {
+        // Add toast notification for success
+      },
+    });
   };
 
   return (
