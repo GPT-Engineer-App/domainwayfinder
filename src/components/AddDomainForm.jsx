@@ -1,60 +1,126 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const formSchema = z.object({
+  name: z.string().min(2, {
+    message: "Domain name must be at least 2 characters.",
+  }),
+  type: z.enum(["Trust", "Knowledge", "Tools", "Exchange"], {
+    required_error: "Please select a domain type.",
+  }),
+  description: z.string().min(10, {
+    message: "Description must be at least 10 characters.",
+  }),
+});
 
 const AddDomainForm = ({ onAddDomain, onCancel }) => {
-  const [name, setName] = useState("");
-  const [type, setType] = useState("");
-  const [description, setDescription] = useState("");
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      type: "",
+      description: "",
+    },
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onAddDomain({ name, type, description });
+  const onSubmit = (values) => {
+    onAddDomain(values);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 p-4 border rounded-lg">
-      <h2 className="text-xl font-bold mb-4">Add New Domain</h2>
-      <div className="mb-4">
-        <label htmlFor="name" className="block mb-1">Name:</label>
-        <input
-          type="text"
-          id="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          className="w-full p-2 border rounded"
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Domain Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter domain name" {...field} />
+              </FormControl>
+              <FormDescription>
+                Choose a unique name for your domain.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="type" className="block mb-1">Type:</label>
-        <select
-          id="type"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          required
-          className="w-full p-2 border rounded"
-        >
-          <option value="">Select a type</option>
-          <option value="Trust">Trust</option>
-          <option value="Knowledge">Knowledge</option>
-          <option value="Tools">Tools</option>
-          <option value="Exchange">Exchange</option>
-        </select>
-      </div>
-      <div className="mb-4">
-        <label htmlFor="description" className="block mb-1">Description:</label>
-        <textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-          className="w-full p-2 border rounded"
-        ></textarea>
-      </div>
-      <div className="flex justify-end">
-        <button type="button" onClick={onCancel} className="mr-2 px-4 py-2 border rounded">Cancel</button>
-        <button type="submit" className="px-4 py-2 bg-primary text-primary-foreground rounded">Add Domain</button>
-      </div>
-    </form>
+        <FormField
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Domain Type</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a domain type" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="Trust">Trust</SelectItem>
+                  <SelectItem value="Knowledge">Knowledge</SelectItem>
+                  <SelectItem value="Tools">Tools</SelectItem>
+                  <SelectItem value="Exchange">Exchange</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormDescription>
+                Choose the type that best describes your domain.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Describe your domain"
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                Provide a brief description of your domain.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex justify-end space-x-4">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="submit">Add Domain</Button>
+        </div>
+      </form>
+    </Form>
   );
 };
 
