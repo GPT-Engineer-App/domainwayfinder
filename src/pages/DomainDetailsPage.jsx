@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchDomainById, updateDomain, deleteDomain, updatePerspective, deletePerspective, incrementDomainViews, addPerspective } from "../services/domainService";
 import PerspectiveList from "../components/PerspectiveList";
 import AddPerspectiveForm from "../components/AddPerspectiveForm";
+import FileUploadForm from "../components/FileUploadForm";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -116,10 +117,17 @@ const DomainDetailsPage = () => {
 
   const handleAddPerspective = (newPerspective) => {
     addPerspectiveMutation.mutate({ domainId: id, ...newPerspective }, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         // Add toast notification for success
+        console.log("New perspective added:", data);
       },
     });
+  };
+
+  const handleFileUpload = (perspectiveId, files) => {
+    // Implement file upload logic here
+    console.log("Uploading files for perspective:", perspectiveId, files);
+    // You may want to create a new mutation for file uploads
   };
 
   return (
@@ -216,6 +224,14 @@ const DomainDetailsPage = () => {
             onDeletePerspective={handleDeletePerspective}
           />
           <AddPerspectiveForm domainId={id} onAddPerspective={handleAddPerspective} />
+          {domain.perspectives.map((perspective) => (
+            <FileUploadForm
+              key={perspective.id}
+              domainId={id}
+              perspectiveId={perspective.id}
+              onFileUpload={(files) => handleFileUpload(perspective.id, files)}
+            />
+          ))}
         </TabsContent>
         <TabsContent value="analytics">
           <h2 className="text-2xl font-bold mb-4">Domain Analytics</h2>

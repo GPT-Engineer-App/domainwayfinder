@@ -4,50 +4,28 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { uploadFile } from "../integrations/supabase/index";
 import { useSupabaseAuth } from "../integrations/supabase/auth";
+import FileUploadForm from "./FileUploadForm";
 
 const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [files, setFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { session } = useSupabaseAuth();
-
-  const handleFileChange = (e) => {
-    setFiles(Array.from(e.target.files));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
-      const uploadedFiles = await Promise.all(files.map(async (file) => {
-        const filePath = `${domainId}/${name}/${file.name}`;
-        const uploadedPath = await uploadFile(file, 'perspectives', filePath);
-
-        if (!uploadedPath) {
-          console.error('Error uploading file:', file.name);
-          return null;
-        }
-
-        return {
-          file_name: file.name,
-          file_url: uploadedPath
-        };
-      }));
-
       await onAddPerspective({ 
         name, 
         description, 
-        files: uploadedFiles.filter(Boolean),
         createdBy: session?.user?.id
       });
 
       setName("");
       setDescription("");
-      setFiles([]);
     } catch (error) {
       console.error('Error adding perspective:', error);
     } finally {
@@ -78,15 +56,6 @@ const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="perspectiveFiles">Upload Files (optional)</Label>
-            <Input
-              id="perspectiveFiles"
-              type="file"
-              multiple
-              onChange={handleFileChange}
             />
           </div>
         </CardContent>
