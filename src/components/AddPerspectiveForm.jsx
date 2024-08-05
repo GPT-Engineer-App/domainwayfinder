@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { uploadFile } from "../integrations/supabase";
+import { uploadFile } from "../integrations/supabase/index";
 import { useSupabaseAuth } from "../integrations/supabase/auth";
 
 const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {

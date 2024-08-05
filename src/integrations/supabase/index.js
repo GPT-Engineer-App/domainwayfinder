@@ -10,6 +10,12 @@ export const getFileUrl = (bucket, path) => {
   return data.publicUrl;
 };
 
+export const uploadFile = async (file, bucket, path) => {
+  const { data, error } = await supabase.storage.from(bucket).upload(path, file);
+  if (error) throw error;
+  return data.path;
+};
+
 import React from "react";
 export const queryClient = new QueryClient();
 export function SupabaseProvider({ children }) {
