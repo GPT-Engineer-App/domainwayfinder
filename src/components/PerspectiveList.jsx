@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { getFileUrl } from "../integrations/supabase";
+import { getFileUrl } from "../integrations/supabase/index";
 
 const PerspectiveList = ({ perspectives, onUpdatePerspective, onDeletePerspective }) => {
   const [editingId, setEditingId] = useState(null);
