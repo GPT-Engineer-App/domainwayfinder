@@ -188,13 +188,25 @@ const UserPage = () => {
                 </>
               ) : (
                 <>
-                  <p className="mb-2"><strong>Username:</strong> {user.username}</p>
-                  <p className="mb-2"><strong>Email:</strong> {user.email}</p>
-                  <p className="mb-2"><strong>Phone:</strong> {user.phone_number}</p>
-                  <p className="mb-2"><strong>Bio:</strong> {user.bio}</p>
-                  <p className="mb-2"><strong>Trust Score:</strong> {user.trust_score}</p>
-                  {user.email_verified && <Badge>Verified Email</Badge>}
-                  {user.phone_verified && <Badge>Verified Phone</Badge>}
+                  <p className="mb-2"><strong>Username:</strong> {user.username || 'Not set'}</p>
+                  <p className="mb-2"><strong>Email:</strong> {user.email || 'Not set'}</p>
+                  <p className="mb-2"><strong>First Name:</strong> {user.first_name || 'Not set'}</p>
+                  <p className="mb-2"><strong>Last Name:</strong> {user.last_name || 'Not set'}</p>
+                  <p className="mb-2"><strong>Phone:</strong> {user.phone_number || 'Not set'}</p>
+                  <p className="mb-2"><strong>Bio:</strong> {user.bio || 'Not set'}</p>
+                  <p className="mb-2"><strong>Date of Birth:</strong> {user.date_of_birth ? new Date(user.date_of_birth).toLocaleDateString() : 'Not set'}</p>
+                  <p className="mb-2"><strong>Role:</strong> {user.role || 'Not set'}</p>
+                  <p className="mb-2"><strong>Status:</strong> {user.status || 'Not set'}</p>
+                  <p className="mb-2"><strong>Language Preference:</strong> {user.language_preference || 'Not set'}</p>
+                  <p className="mb-2"><strong>Timezone:</strong> {user.timezone || 'Not set'}</p>
+                  <p className="mb-2"><strong>Trust Score:</strong> {user.trust_score || 'Not set'}</p>
+                  <p className="mb-2"><strong>Last Login:</strong> {user.last_login ? new Date(user.last_login).toLocaleString() : 'Never'}</p>
+                  <p className="mb-2"><strong>Failed Login Attempts:</strong> {user.failed_login_attempts || 0}</p>
+                  <p className="mb-2"><strong>Two-Factor Authentication:</strong> {user.two_factor_enabled ? 'Enabled' : 'Disabled'}</p>
+                  <div className="mb-2">
+                    {user.email_verified && <Badge className="mr-2">Verified Email</Badge>}
+                    {user.phone_verified && <Badge>Verified Phone</Badge>}
+                  </div>
                 </>
               )}
             </TabsContent>
