@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchDomainById, updateDomain, deleteDomain, updatePerspective, deletePerspective, incrementDomainViews, addPerspective } from "../services/domainService";
+import { fetchDomainById, updateDomain, deleteDomain, updatePerspective, deletePerspective, incrementDomainViews } from "../services/domainService";
 import PerspectiveList from "../components/PerspectiveList";
 import AddPerspectiveForm from "../components/AddPerspectiveForm";
 import { useState, useEffect } from "react";
@@ -81,17 +81,6 @@ const DomainDetailsPage = () => {
 
   const handleDeletePerspective = (perspectiveId) => {
     deletePerspectiveMutation.mutate(perspectiveId);
-  };
-
-  const addPerspectiveMutation = useMutation({
-    mutationFn: addPerspective,
-    onSuccess: () => {
-      queryClient.invalidateQueries(["domain", id]);
-    },
-  });
-
-  const handleAddPerspective = (newPerspective) => {
-    addPerspectiveMutation.mutate({ domainId: id, ...newPerspective });
   };
 
   return (
@@ -187,7 +176,7 @@ const DomainDetailsPage = () => {
             onUpdatePerspective={handleUpdatePerspective}
             onDeletePerspective={handleDeletePerspective}
           />
-          <AddPerspectiveForm domainId={id} onAddPerspective={handleAddPerspective} />
+          <AddPerspectiveForm domainId={id} />
         </TabsContent>
         <TabsContent value="analytics">
           <h2 className="text-2xl font-bold mb-4">Domain Analytics</h2>

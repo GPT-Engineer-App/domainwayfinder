@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addPerspective } from "../services/domainService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,10 +8,21 @@ import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { supabase } from "../integrations/supabase";
 
-const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {
+const AddPerspectiveForm = ({ domainId }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState([]);
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: addPerspective,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["domain", domainId]);
+      setName("");
+      setDescription("");
+      setFiles([]);
+    },
+  });
 
   const handleFileChange = (e) => {
     setFiles(e.target.files);
@@ -34,15 +47,12 @@ const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {
       };
     }));
 
-    onAddPerspective({ 
+    mutation.mutate({ 
+      domainId, 
       name, 
       description, 
       files: uploadedFiles.filter(Boolean)
     });
-
-    setName("");
-    setDescription("");
-    setFiles([]);
   };
 
   return (
@@ -71,7 +81,7 @@ const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="perspectiveFiles">Upload Files (optional)</Label>
+            <Label htmlFor="perspectiveFiles">Upload Files</Label>
             <Input
               id="perspectiveFiles"
               type="file"
