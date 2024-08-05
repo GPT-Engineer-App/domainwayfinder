@@ -15,13 +15,41 @@ export const fetchUser = async (id) => {
     .single();
   
   if (error) throw error;
-  return data;
+  return {
+    ...data,
+    friends: data.friends || [],
+    following: data.following || [],
+    followers: data.followers || [],
+    preferences: data.preferences || {}
+  };
 };
 
 export const updateUser = async (id, updates) => {
   const { data, error } = await supabase
     .from('users')
     .update(updates)
+    .eq('id', id)
+    .select();
+  
+  if (error) throw error;
+  return data[0];
+};
+
+export const updateUserPreferences = async (id, preferences) => {
+  const { data, error } = await supabase
+    .from('users')
+    .update({ preferences })
+    .eq('id', id)
+    .select();
+  
+  if (error) throw error;
+  return data[0];
+};
+
+export const updateUserSocialConnections = async (id, connectionType, connections) => {
+  const { data, error } = await supabase
+    .from('users')
+    .update({ [connectionType]: connections })
     .eq('id', id)
     .select();
   
