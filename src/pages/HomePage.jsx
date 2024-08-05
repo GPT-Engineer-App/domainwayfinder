@@ -18,7 +18,7 @@ const HomePage = () => {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const filteredDomains = domains?.filter(domain =>
+  const filteredDomains = domains ? domains.filter(domain =>
     (domain.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     domain.description.toLowerCase().includes(searchTerm.toLowerCase())) &&
     (filterType === "all" || domain.type === filterType)
@@ -75,7 +75,13 @@ const HomePage = () => {
       {isAddingDomain && (
         <AddDomainForm onAddDomain={handleAddDomain} onCancel={() => setIsAddingDomain(false)} />
       )}
-      <DomainList domains={filteredDomains} />
+      {isLoading ? (
+        <div className="text-center py-8">Loading domains...</div>
+      ) : isError ? (
+        <div className="text-center py-8 text-red-500">Error loading domains. Please try again.</div>
+      ) : (
+        <DomainList domains={filteredDomains} />
+      )}
     </div>
   );
 };
