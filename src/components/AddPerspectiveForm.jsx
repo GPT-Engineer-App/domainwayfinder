@@ -11,40 +11,48 @@ const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { session } = useSupabaseAuth();
 
   const handleFileChange = (e) => {
-    setFiles(e.target.files);
+    setFiles(Array.from(e.target.files));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
-    const uploadedFiles = await Promise.all([...files].map(async (file) => {
-      const filePath = `${domainId}/${name}/${file.name}`;
-      const uploadedPath = await uploadFile(file, 'perspectives', filePath);
+    try {
+      const uploadedFiles = await Promise.all(files.map(async (file) => {
+        const filePath = `${domainId}/${name}/${file.name}`;
+        const uploadedPath = await uploadFile(file, 'perspectives', filePath);
 
-      if (!uploadedPath) {
-        console.error('Error uploading file:', file.name);
-        return null;
-      }
+        if (!uploadedPath) {
+          console.error('Error uploading file:', file.name);
+          return null;
+        }
 
-      return {
-        file_name: file.name,
-        file_url: uploadedPath
-      };
-    }));
+        return {
+          file_name: file.name,
+          file_url: uploadedPath
+        };
+      }));
 
-    onAddPerspective({ 
-      name, 
-      description, 
-      files: uploadedFiles.filter(Boolean),
-      createdBy: session?.user?.id
-    });
+      await onAddPerspective({ 
+        name, 
+        description, 
+        files: uploadedFiles.filter(Boolean),
+        createdBy: session?.user?.id
+      });
 
-    setName("");
-    setDescription("");
-    setFiles([]);
+      setName("");
+      setDescription("");
+      setFiles([]);
+    } catch (error) {
+      console.error('Error adding perspective:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -83,7 +91,9 @@ const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {
           </div>
         </CardContent>
         <CardFooter>
-          <Button type="submit">Add Perspective</Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Adding..." : "Add Perspective"}
+          </Button>
         </CardFooter>
       </form>
     </Card>
