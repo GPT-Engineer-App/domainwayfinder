@@ -59,7 +59,7 @@ export const addPerspective = async ({ domainId, name, description, files, creat
   // Insert new perspective
   const { data: perspectiveData, error: perspectiveError } = await supabase
     .from('perspectives')
-    .insert([{ domain_id: domainId, name, description, created_by: createdBy, views: 0 }])
+    .insert([{ domain_id: domainId, name, description, created_by: createdBy }])
     .select();
 
   if (perspectiveError) throw perspectiveError;
@@ -96,13 +96,10 @@ export const addPerspective = async ({ domainId, name, description, files, creat
 
 export const incrementPerspectiveViews = async (id) => {
   const { data, error } = await supabase
-    .from('perspectives')
-    .update({ views: supabase.rpc('increment_views', { row_id: id }) })
-    .eq('id', id)
-    .select();
+    .rpc('increment_perspective_views', { perspective_id: id });
   
   if (error) throw error;
-  return data[0];
+  return data;
 };
 
 export const updateDomain = async (id, updates) => {

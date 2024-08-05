@@ -78,6 +78,9 @@ const DomainDetailsPage = () => {
   useEffect(() => {
     if (domain) {
       incrementDomainViews(id);
+      domain.perspectives.forEach(perspective => {
+        incrementPerspectiveViews(perspective.id);
+      });
     }
   }, [domain, id]);
 
