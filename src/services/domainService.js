@@ -1,8 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = 'https://yikgsmwivhpchmupolcw.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlpa2dzbXdpdmhwY2htdXBvbGN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjI4NjU0MDMsImV4cCI6MjAzODQ0MTQwM30.v9J_W-BwYucTY61d-23mSfiDmQhgD7a6oFJzHIwOfnA';
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from '../integrations/supabase';
 
 export const fetchDomains = async () => {
   const { data, error } = await supabase
@@ -15,7 +11,7 @@ export const fetchDomains = async () => {
   if (error) throw error;
   return data.map(domain => ({
     ...domain,
-    perspectives: domain.perspectives.length,
+    perspectives: domain.perspectives ? domain.perspectives.length : 0,
     views: domain.views || 0
   }));
 };
@@ -25,7 +21,10 @@ export const fetchDomainById = async (id) => {
     .from('domains')
     .select(`
       *,
-      perspectives (*)
+      perspectives (
+        *,
+        files:perspective_files(*)
+      )
     `)
     .eq('id', id)
     .single();
@@ -35,14 +34,10 @@ export const fetchDomainById = async (id) => {
 };
 
 export const incrementDomainViews = async (id) => {
-  const { data, error } = await supabase
-    .from('domains')
-    .update({ views: supabase.rpc('increment_views') })
-    .eq('id', id)
-    .select();
+  const { data, error } = await supabase.rpc('increment_domain_views', { domain_id: id });
   
   if (error) throw error;
-  return data[0];
+  return data;
 };
 
 export const createDomain = async (domain) => {
@@ -95,8 +90,7 @@ export const addPerspective = async ({ domainId, name, description, files, creat
 };
 
 export const incrementPerspectiveViews = async (id) => {
-  const { data, error } = await supabase
-    .rpc('increment_perspective_views', { perspective_id: id });
+  const { data, error } = await supabase.rpc('increment_perspective_views', { perspective_id: id });
   
   if (error) throw error;
   return data;

@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchDomainById, updateDomain, deleteDomain, updatePerspective, deletePerspective, incrementDomainViews, addPerspective } from "../services/domainService";
+import { fetchDomainById, updateDomain, deleteDomain, updatePerspective, deletePerspective, incrementDomainViews, addPerspective, incrementPerspectiveViews } from "../services/domainService";
 import PerspectiveList from "../components/PerspectiveList";
 import AddPerspectiveForm from "../components/AddPerspectiveForm";
 import FileUploadForm from "../components/FileUploadForm";
@@ -78,9 +78,6 @@ const DomainDetailsPage = () => {
   useEffect(() => {
     if (domain) {
       incrementDomainViews(id);
-      domain.perspectives.forEach(perspective => {
-        incrementPerspectiveViews(perspective.id);
-      });
     }
   }, [domain, id]);
 
