@@ -15,7 +15,7 @@ const App = () => (
       <BrowserRouter>
         <div className="min-h-screen bg-background">
           <Navbar />
-          <main className="container mx-auto py-8">
+          <main className="container mx-auto py-8 px-4">
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/domain/:id" element={<DomainDetailsPage />} />

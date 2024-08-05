@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const DomainList = ({ domains }) => {
   return (
@@ -8,12 +9,14 @@ const DomainList = ({ domains }) => {
         <Link key={domain.id} to={`/domain/${domain.id}`} className="block">
           <Card className="h-full hover:shadow-lg transition-shadow">
             <CardHeader>
-              <CardTitle>{domain.name}</CardTitle>
-              <CardDescription>
-                <span className="font-semibold">Type:</span> {domain.type}
-              </CardDescription>
-              <CardDescription className="mt-2">{domain.description}</CardDescription>
+              <CardTitle className="flex justify-between items-center">
+                {domain.name}
+                <Badge>{domain.type}</Badge>
+              </CardTitle>
             </CardHeader>
+            <CardContent>
+              <CardDescription className="line-clamp-3">{domain.description}</CardDescription>
+            </CardContent>
           </Card>
         </Link>
       ))}
