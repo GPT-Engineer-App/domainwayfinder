@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { useQuery, useMutation, useQueryClient, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const supabaseUrl = 'https://yikgsmwivhpchmupolcw.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlpa2dzbXdpdmhwY2htdXBvbGN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjI4NjU0MDMsImV4cCI6MjAzODQ0MTQwM30.v9J_W-BwYucTY61d-23mSfiDmQhgD7a6oFJzHIwOfnA';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_PROJECT_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_API_KEY;
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 import React from "react";
@@ -24,40 +24,55 @@ const fromSupabase = async (query) => {
 | name      | type   | format | required |
 |-----------|--------|--------|----------|
 | id        | int8   | number | true     |
-| domain_id | int8   | number | true     |
+| domain_id | int8   | number | false    |
 | name      | text   | string | false    |
 | data      | jsonb  | json   | false    |
 
 ### users
 
-| name     | type | format | required |
-|----------|------|--------|----------|
-| id       | int8 | number | true     |
-| username | text | string | false    |
-| email    | text | string | false    |
-| password | text | string | false    |
+| name                 | type                    | format   | required |
+|----------------------|-------------------------|----------|----------|
+| id                   | int8                    | number   | true     |
+| username             | text                    | string   | true     |
+| email                | text                    | string   | true     |
+| password_hash        | text                    | string   | true     |
+| first_name           | text                    | string   | false    |
+| last_name            | text                    | string   | false    |
+| avatar_url           | text                    | string   | false    |
+| bio                  | text                    | string   | false    |
+| date_of_birth        | timestamp with time zone| string   | false    |
+| phone_number         | text                    | string   | false    |
+| role                 | text                    | string   | false    |
+| status               | text                    | string   | false    |
+| language_preference  | text                    | string   | false    |
+| timezone             | text                    | string   | false    |
+| two_factor_enabled   | boolean                 | boolean  | false    |
+| last_login           | timestamp with time zone| string   | false    |
+| failed_login_attempts| integer                 | number   | false    |
+| reset_token          | text                    | string   | false    |
+| friends              | uuid[]                  | array    | false    |
+| following            | uuid[]                  | array    | false    |
+| followers            | uuid[]                  | array    | false    |
+| preferences          | jsonb                   | json     | false    |
+| created_at           | timestamp with time zone| string   | false    |
+| updated_at           | timestamp with time zone| string   | false    |
 
 ### domains
 
-| name         | type   | format | required |
-|--------------|--------|--------|----------|
-| id           | int8   | number | true     |
-| name         | text   | string | false    |
-| type         | text   | string | false    |
-| description  | text   | string | false    |
-| perspectives | jsonb  | json   | false    |
+| name         | type  | format | required |
+|--------------|-------|--------|----------|
+| id           | int8  | number | true     |
+| name         | text  | string | false    |
+| type         | text  | string | false    |
+| description  | text  | string | false    |
+| perspectives | jsonb | json   | false    |
 
 */
 
-// Perspectives hooks
+// Hooks for perspectives
 export const usePerspectives = () => useQuery({
     queryKey: ['perspectives'],
     queryFn: () => fromSupabase(supabase.from('perspectives').select('*')),
-});
-
-export const usePerspective = (id) => useQuery({
-    queryKey: ['perspectives', id],
-    queryFn: () => fromSupabase(supabase.from('perspectives').select('*').eq('id', id).single()),
 });
 
 export const useAddPerspective = () => {
@@ -73,7 +88,7 @@ export const useAddPerspective = () => {
 export const useUpdatePerspective = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('perspectives').update(updateData).eq('id', id)),
+        mutationFn: ({ id, updates }) => fromSupabase(supabase.from('perspectives').update(updates).eq('id', id)),
         onSuccess: () => {
             queryClient.invalidateQueries('perspectives');
         },
@@ -90,15 +105,10 @@ export const useDeletePerspective = () => {
     });
 };
 
-// Users hooks
+// Hooks for users
 export const useUsers = () => useQuery({
     queryKey: ['users'],
     queryFn: () => fromSupabase(supabase.from('users').select('*')),
-});
-
-export const useUser = (id) => useQuery({
-    queryKey: ['users', id],
-    queryFn: () => fromSupabase(supabase.from('users').select('*').eq('id', id).single()),
 });
 
 export const useAddUser = () => {
@@ -114,7 +124,7 @@ export const useAddUser = () => {
 export const useUpdateUser = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('users').update(updateData).eq('id', id)),
+        mutationFn: ({ id, updates }) => fromSupabase(supabase.from('users').update(updates).eq('id', id)),
         onSuccess: () => {
             queryClient.invalidateQueries('users');
         },
@@ -131,15 +141,10 @@ export const useDeleteUser = () => {
     });
 };
 
-// Domains hooks
+// Hooks for domains
 export const useDomains = () => useQuery({
     queryKey: ['domains'],
     queryFn: () => fromSupabase(supabase.from('domains').select('*')),
-});
-
-export const useDomain = (id) => useQuery({
-    queryKey: ['domains', id],
-    queryFn: () => fromSupabase(supabase.from('domains').select('*').eq('id', id).single()),
 });
 
 export const useAddDomain = () => {
@@ -155,7 +160,7 @@ export const useAddDomain = () => {
 export const useUpdateDomain = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('domains').update(updateData).eq('id', id)),
+        mutationFn: ({ id, updates }) => fromSupabase(supabase.from('domains').update(updates).eq('id', id)),
         onSuccess: () => {
             queryClient.invalidateQueries('domains');
         },
