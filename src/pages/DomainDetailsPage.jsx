@@ -25,12 +25,6 @@ const DomainDetailsPage = () => {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  useEffect(() => {
-    if (domain) {
-      incrementDomainViews(id);
-    }
-  }, [domain, id]);
-
   const updateDomainMutation = useMutation({
     mutationFn: ({ id, updates }) => updateDomain(id, updates),
     onSuccess: () => {
@@ -61,6 +55,19 @@ const DomainDetailsPage = () => {
     },
   });
 
+  const addPerspectiveMutation = useMutation({
+    mutationFn: addPerspective,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["domain", id] });
+    },
+  });
+
+  useEffect(() => {
+    if (domain) {
+      incrementDomainViews(id);
+    }
+  }, [domain, id]);
+
   if (isLoading) return <div className="text-center py-8">Loading domain details...</div>;
   if (isError) return <div className="text-center py-8 text-red-500">Error fetching domain details</div>;
 
@@ -84,13 +91,6 @@ const DomainDetailsPage = () => {
   const handleDeletePerspective = (perspectiveId) => {
     deletePerspectiveMutation.mutate(perspectiveId);
   };
-
-  const addPerspectiveMutation = useMutation({
-    mutationFn: addPerspective,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["domain", id] });
-    },
-  });
 
   const handleAddPerspective = (newPerspective) => {
     addPerspectiveMutation.mutate({ domainId: id, ...newPerspective });
