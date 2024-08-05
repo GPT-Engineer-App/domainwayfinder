@@ -55,11 +55,11 @@ export const createDomain = async (domain) => {
   return data[0];
 };
 
-export const addPerspective = async ({ domainId, name, description, files }) => {
+export const addPerspective = async ({ domainId, name, description, files, createdBy }) => {
   // Insert new perspective
   const { data: perspectiveData, error: perspectiveError } = await supabase
     .from('perspectives')
-    .insert([{ domain_id: domainId, name, description }])
+    .insert([{ domain_id: domainId, name, description, created_by: createdBy }])
     .select();
 
   if (perspectiveError) throw perspectiveError;
@@ -67,7 +67,7 @@ export const addPerspective = async ({ domainId, name, description, files }) => 
   // Insert files associated with the perspective
   if (files && files.length > 0) {
     const { data: fileData, error: fileError } = await supabase
-      .from('files')
+      .from('perspective_files')
       .insert(
         files.map((file) => ({
           perspective_id: perspectiveData[0].id,
@@ -80,6 +80,17 @@ export const addPerspective = async ({ domainId, name, description, files }) => 
   }
 
   return perspectiveData[0];
+};
+
+export const incrementPerspectiveViews = async (id) => {
+  const { data, error } = await supabase
+    .from('perspectives')
+    .update({ views: supabase.rpc('increment_views') })
+    .eq('id', id)
+    .select();
+  
+  if (error) throw error;
+  return data[0];
 };
 
 export const updateDomain = async (id, updates) => {

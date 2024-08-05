@@ -5,11 +5,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { uploadFile } from "../integrations/supabase";
+import { useSupabaseAuth } from "../integrations/supabase/auth";
 
 const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState([]);
+  const { session } = useSupabaseAuth();
 
   const handleFileChange = (e) => {
     setFiles(e.target.files);
@@ -36,7 +38,8 @@ const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {
     onAddPerspective({ 
       name, 
       description, 
-      files: uploadedFiles.filter(Boolean)
+      files: uploadedFiles.filter(Boolean),
+      createdBy: session?.user?.id
     });
 
     setName("");
