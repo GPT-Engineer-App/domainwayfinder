@@ -22,7 +22,7 @@ const HomePage = () => {
     (domain.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     domain.description.toLowerCase().includes(searchTerm.toLowerCase())) &&
     (filterType === "all" || domain.type === filterType)
-  );
+  ) : [];
 
   const handleAddDomain = async (newDomain) => {
     await createDomain(newDomain);
