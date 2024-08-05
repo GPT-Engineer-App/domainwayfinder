@@ -5,11 +5,11 @@ export const fetchUser = async (id) => {
     .from('users')
     .select(`
       *,
-      work_history:user_work_history(*),
-      education:user_education(*),
-      certifications:user_certifications(*),
-      projects:user_projects(*),
-      skills:user_skills(*)
+      work_history:work_history(*),
+      education:education(*),
+      certifications:certifications(*),
+      projects:projects(*),
+      skills:skills(*)
     `)
     .eq('id', id)
     .single();

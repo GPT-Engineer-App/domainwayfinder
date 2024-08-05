@@ -9,15 +9,14 @@ export const fetchDomains = async () => {
     .from('domains')
     .select(`
       *,
-      perspectives (count),
-      views:domain_views(count)
+      perspectives:perspectives(count)
     `);
   
   if (error) throw error;
   return data.map(domain => ({
     ...domain,
     perspectives: domain.perspectives[0].count,
-    views: domain.views[0].count
+    views: domain.views || 0
   }));
 };
 
@@ -26,25 +25,24 @@ export const fetchDomainById = async (id) => {
     .from('domains')
     .select(`
       *,
-      perspectives (*),
-      views:domain_views(count)
+      perspectives (*)
     `)
     .eq('id', id)
     .single();
   
   if (error) throw error;
-  return {
-    ...data,
-    views: data.views[0].count
-  };
+  return data;
 };
 
 export const incrementDomainViews = async (id) => {
-  const { error } = await supabase
-    .from('domain_views')
-    .insert({ domain_id: id });
+  const { data, error } = await supabase
+    .from('domains')
+    .update({ views: supabase.rpc('increment_views') })
+    .eq('id', id)
+    .select();
   
   if (error) throw error;
+  return data[0];
 };
 
 export const createDomain = async (domain) => {

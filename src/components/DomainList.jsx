@@ -29,7 +29,7 @@ const DomainList = ({ domains }) => {
               </div>
               <div className="flex items-center">
                 <MessageSquare className="mr-1 h-4 w-4" />
-                {domain.perspectives?.length || 0}
+                {domain.perspectives || 0}
               </div>
             </CardFooter>
           </Card>
