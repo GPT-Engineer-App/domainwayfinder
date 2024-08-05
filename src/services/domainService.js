@@ -46,3 +46,43 @@ export const addPerspective = async ({ domainId, name, description }) => {
   if (error) throw error;
   return data[0];
 };
+
+export const updateDomain = async (id, updates) => {
+  const { data, error } = await supabase
+    .from('domains')
+    .update(updates)
+    .eq('id', id)
+    .select();
+  
+  if (error) throw error;
+  return data[0];
+};
+
+export const deleteDomain = async (id) => {
+  const { error } = await supabase
+    .from('domains')
+    .delete()
+    .eq('id', id);
+  
+  if (error) throw error;
+};
+
+export const updatePerspective = async (id, updates) => {
+  const { data, error } = await supabase
+    .from('perspectives')
+    .update(updates)
+    .eq('id', id)
+    .select();
+  
+  if (error) throw error;
+  return data[0];
+};
+
+export const deletePerspective = async (id) => {
+  const { error } = await supabase
+    .from('perspectives')
+    .delete()
+    .eq('id', id);
+  
+  if (error) throw error;
+};
