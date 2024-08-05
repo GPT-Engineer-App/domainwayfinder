@@ -139,7 +139,7 @@ export const acceptConnectionRequest = async (requestId) => {
   return data[0];
 };
 
-export const updateUserPreferences = async (userId, preferences) => {
+export const updateUserPreferencesTable = async (userId, preferences) => {
   const { data, error } = await supabase
     .from('user_preferences')
     .upsert({ user_id: userId, ...preferences })
