@@ -5,14 +5,15 @@ export const fetchDomains = async () => {
     .from('domains')
     .select(`
       *,
-      perspectives:perspectives(id, name)
+      perspectives:perspectives(count),
+      views:domain_views(count)
     `);
   
   if (error) throw error;
   return data.map(domain => ({
     ...domain,
-    perspectives: domain.perspectives ? domain.perspectives.length : 0,
-    views: domain.views || 0
+    perspectives: domain.perspectives[0]?.count || 0,
+    views: domain.views[0]?.count || 0
   }));
 };
 
@@ -44,8 +45,18 @@ export const createDomain = async (domain) => {
   const { data, error } = await supabase
     .from('domains')
     .insert([domain])
-    .select();
+    .select('*');
   
+  if (error) throw error;
+  return data[0];
+};
+
+export const addPerspective = async (perspective) => {
+  const { data, error } = await supabase
+    .from('perspectives')
+    .insert([perspective])
+    .select('*');
+
   if (error) throw error;
   return data[0];
 };
@@ -70,7 +81,7 @@ export const updateDomain = async (id, updates) => {
     .from('domains')
     .update(updates)
     .eq('id', id)
-    .select();
+    .select('*');
   
   if (error) throw error;
   return data[0];

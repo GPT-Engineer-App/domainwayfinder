@@ -44,7 +44,7 @@ const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {
     try {
       await onAddPerspective({
         ...values,
-        createdBy: session?.user?.id,
+        created_by: session?.user?.id,
       });
       form.reset();
     } catch (error) {
