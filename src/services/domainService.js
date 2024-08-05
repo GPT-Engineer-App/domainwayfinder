@@ -9,13 +9,13 @@ export const fetchDomains = async () => {
     .from('domains')
     .select(`
       *,
-      perspectives:perspectives(count)
+      perspectives:perspectives(id, name)
     `);
   
   if (error) throw error;
   return data.map(domain => ({
     ...domain,
-    perspectives: domain.perspectives[0].count,
+    perspectives: domain.perspectives.length,
     views: domain.views || 0
   }));
 };
@@ -79,13 +79,25 @@ export const addPerspective = async ({ domainId, name, description, files, creat
     if (fileError) throw fileError;
   }
 
-  return perspectiveData[0];
+  // Fetch the inserted perspective with its files
+  const { data: fullPerspectiveData, error: fullPerspectiveError } = await supabase
+    .from('perspectives')
+    .select(`
+      *,
+      files:perspective_files(*)
+    `)
+    .eq('id', perspectiveData[0].id)
+    .single();
+
+  if (fullPerspectiveError) throw fullPerspectiveError;
+
+  return fullPerspectiveData;
 };
 
 export const incrementPerspectiveViews = async (id) => {
   const { data, error } = await supabase
     .from('perspectives')
-    .update({ views: supabase.rpc('increment_views') })
+    .update({ views: supabase.rpc('increment', { row_id: id }) })
     .eq('id', id)
     .select();
   
