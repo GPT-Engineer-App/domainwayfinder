@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { useQuery, useMutation, useQueryClient, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_PROJECT_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_API_KEY;
+const supabaseUrl = 'https://yikgsmwivhpchmupolcw.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlpa2dzbXdpdmhwY2htdXBvbGN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjI4NjU0MDMsImV4cCI6MjAzODQ0MTQwM30.v9J_W-BwYucTY61d-23mSfiDmQhgD7a6oFJzHIwOfnA';
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 import React from "react";
