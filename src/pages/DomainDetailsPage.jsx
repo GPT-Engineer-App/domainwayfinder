@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchDomainById, updateDomain, deleteDomain, updatePerspective, deletePerspective, incrementDomainViews, addPerspective, incrementPerspectiveViews } from "../services/domainService";
 import DomainList from "../components/DomainList";
-import AddDomainTypeForm from "../components/AddDomainTypeForm";
+import AddDomainForm from "../components/AddDomainForm";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -114,8 +114,8 @@ const DomainDetailsPage = () => {
     }
   };
 
-  const handleAddDomainType = (newDomainType) => {
-    addDomainTypeMutation.mutate({ domainId: id, ...newDomainType }, {
+  const handleAddDomainType = (newDomain) => {
+    addDomainTypeMutation.mutate({ domainId: id, type: newDomain.type, description: newDomain.description }, {
       onSuccess: (data) => {
         // Add toast notification for success
         console.log("New domain type added:", data);
@@ -216,7 +216,7 @@ const DomainDetailsPage = () => {
             onUpdateDomain={handleUpdateDomainType}
             onDeleteDomain={handleDeleteDomainType}
           />
-          <AddDomainTypeForm domainId={id} onAddDomainType={handleAddDomainType} />
+          <AddDomainForm onAddDomain={handleAddDomainType} onCancel={() => {}} />
         </TabsContent>
         <TabsContent value="analytics">
           <h2 className="text-2xl font-bold mb-4">Domain Analytics</h2>
