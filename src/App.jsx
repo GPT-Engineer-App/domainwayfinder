@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import DomainDetailsPage from "./pages/DomainDetailsPage";
+import UserPage from "./pages/UserPage";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/domain/:id" element={<DomainDetailsPage />} />
+              <Route path="/user/:id" element={<UserPage />} />
             </Routes>
           </main>
         </div>
