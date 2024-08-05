@@ -1,16 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchDomainById, updateDomain, deleteDomain, updatePerspective, deletePerspective, incrementDomainViews } from "../services/domainService";
+import { fetchDomainById, updateDomain, deleteDomain, updatePerspective, deletePerspective } from "../services/domainService";
 import PerspectiveList from "../components/PerspectiveList";
 import AddPerspectiveForm from "../components/AddPerspectiveForm";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Eye, MessageSquare, Calendar } from "lucide-react";
 
 const DomainDetailsPage = () => {
   const { id } = useParams();
@@ -23,12 +21,6 @@ const DomainDetailsPage = () => {
     queryKey: ["domain", id],
     queryFn: () => fetchDomainById(id),
   });
-
-  useEffect(() => {
-    if (domain) {
-      incrementDomainViews(id);
-    }
-  }, [domain, id]);
 
   const updateDomainMutation = useMutation({
     mutationFn: ({ id, updates }) => updateDomain(id, updates),
@@ -117,20 +109,6 @@ const DomainDetailsPage = () => {
             <>
               <p className="mb-2"><strong>Type:</strong> {domain.type}</p>
               <p className="mb-2"><strong>Description:</strong> {domain.description}</p>
-              <div className="flex justify-between text-sm text-muted-foreground mt-4">
-                <div className="flex items-center">
-                  <Eye className="mr-1 h-4 w-4" />
-                  {domain.views} views
-                </div>
-                <div className="flex items-center">
-                  <MessageSquare className="mr-1 h-4 w-4" />
-                  {domain.perspectives?.length} perspectives
-                </div>
-                <div className="flex items-center">
-                  <Calendar className="mr-1 h-4 w-4" />
-                  Created: {new Date(domain.created_at).toLocaleDateString()}
-                </div>
-              </div>
             </>
           )}
         </CardContent>
@@ -164,25 +142,13 @@ const DomainDetailsPage = () => {
           )}
         </CardFooter>
       </Card>
-      <Tabs defaultValue="perspectives" className="w-full">
-        <TabsList>
-          <TabsTrigger value="perspectives">Perspectives</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-        </TabsList>
-        <TabsContent value="perspectives">
-          <h2 className="text-2xl font-bold mb-4">Perspectives</h2>
-          <PerspectiveList
-            perspectives={domain.perspectives}
-            onUpdatePerspective={handleUpdatePerspective}
-            onDeletePerspective={handleDeletePerspective}
-          />
-          <AddPerspectiveForm domainId={id} />
-        </TabsContent>
-        <TabsContent value="analytics">
-          <h2 className="text-2xl font-bold mb-4">Domain Analytics</h2>
-          {/* Add analytics components here */}
-        </TabsContent>
-      </Tabs>
+      <h2 className="text-2xl font-bold mb-4">Perspectives</h2>
+      <PerspectiveList
+        perspectives={domain.perspectives}
+        onUpdatePerspective={handleUpdatePerspective}
+        onDeletePerspective={handleDeletePerspective}
+      />
+      <AddPerspectiveForm domainId={id} />
     </div>
   );
 };

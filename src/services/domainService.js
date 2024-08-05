@@ -7,18 +7,10 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 export const fetchDomains = async () => {
   const { data, error } = await supabase
     .from('domains')
-    .select(`
-      *,
-      perspectives (count),
-      views:domain_views(count)
-    `);
+    .select('*');
   
   if (error) throw error;
-  return data.map(domain => ({
-    ...domain,
-    perspectives: domain.perspectives[0].count,
-    views: domain.views[0].count
-  }));
+  return data;
 };
 
 export const fetchDomainById = async (id) => {
@@ -26,25 +18,13 @@ export const fetchDomainById = async (id) => {
     .from('domains')
     .select(`
       *,
-      perspectives (*),
-      views:domain_views(count)
+      perspectives (*)
     `)
     .eq('id', id)
     .single();
   
   if (error) throw error;
-  return {
-    ...data,
-    views: data.views[0].count
-  };
-};
-
-export const incrementDomainViews = async (id) => {
-  const { error } = await supabase
-    .from('domain_views')
-    .insert({ domain_id: id });
-  
-  if (error) throw error;
+  return data;
 };
 
 export const createDomain = async (domain) => {

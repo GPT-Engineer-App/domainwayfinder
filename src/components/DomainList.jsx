@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Eye, MessageSquare } from "lucide-react";
 
 const DomainList = ({ domains }) => {
   return (
@@ -18,16 +17,6 @@ const DomainList = ({ domains }) => {
             <CardContent>
               <CardDescription className="line-clamp-3">{domain.description}</CardDescription>
             </CardContent>
-            <CardFooter className="flex justify-between text-sm text-muted-foreground">
-              <div className="flex items-center">
-                <Eye className="mr-1 h-4 w-4" />
-                {domain.views || 0}
-              </div>
-              <div className="flex items-center">
-                <MessageSquare className="mr-1 h-4 w-4" />
-                {domain.perspectives?.length || 0}
-              </div>
-            </CardFooter>
           </Card>
         </Link>
       ))}
