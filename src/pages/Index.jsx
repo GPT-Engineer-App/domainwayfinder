@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Globe, Search, TrendingUp } from "lucide-react";
+import { Globe, Search, TrendingUp, BookOpen, Users, Zap } from "lucide-react";
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,11 +23,11 @@ const Index = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 text-center">Domain Navigational Tool</h1>
+      <h1 className="text-5xl font-bold mb-8 text-center bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Domain Navigational Tool</h1>
       
-      <Card className="mb-8">
+      <Card className="mb-8 shadow-lg">
         <CardHeader>
-          <CardTitle>Explore Domains</CardTitle>
+          <CardTitle className="text-2xl">Explore Domains</CardTitle>
           <CardDescription>Search and discover various domains of knowledge</CardDescription>
         </CardHeader>
         <CardContent>
@@ -37,24 +37,27 @@ const Index = () => {
               placeholder="Search domains..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-grow"
+              className="flex-grow text-lg"
             />
-            <Button>
-              <Search className="mr-2 h-4 w-4" /> Search
+            <Button size="lg">
+              <Search className="mr-2 h-5 w-5" /> Search
             </Button>
           </div>
         </CardContent>
       </Card>
 
       <Tabs defaultValue="all" className="mb-8">
-        <TabsList>
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="all">All Domains</TabsTrigger>
           <TabsTrigger value="popular">Popular</TabsTrigger>
           <TabsTrigger value="recent">Recently Added</TabsTrigger>
         </TabsList>
         <TabsContent value="all">
           {isLoading ? (
-            <div className="text-center py-8">Loading domains...</div>
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+              <p className="mt-4">Loading domains...</p>
+            </div>
           ) : isError ? (
             <div className="text-center py-8 text-red-500">Error loading domains. Please try again.</div>
           ) : (
@@ -70,42 +73,42 @@ const Index = () => {
       </Tabs>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
+        <Card className="hover:shadow-xl transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Globe className="mr-2" /> Explore
+              <BookOpen className="mr-2 text-primary" /> Learn
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p>Discover new domains and expand your knowledge.</p>
-            <Button className="mt-4" asChild>
-              <Link to="/domains">View All Domains</Link>
+            <p>Explore new domains and expand your knowledge base.</p>
+            <Button className="mt-4 w-full" variant="outline" asChild>
+              <Link to="/domains">Browse Domains</Link>
             </Button>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="hover:shadow-xl transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <TrendingUp className="mr-2" /> Trending
+              <Users className="mr-2 text-primary" /> Connect
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p>See what's popular in the community right now.</p>
-            <Button className="mt-4" asChild>
-              <Link to="/trending">View Trends</Link>
+            <p>Engage with experts and enthusiasts in various domains.</p>
+            <Button className="mt-4 w-full" variant="outline" asChild>
+              <Link to="/community">Join Community</Link>
             </Button>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="hover:shadow-xl transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Search className="mr-2" /> Advanced Search
+              <Zap className="mr-2 text-primary" /> Contribute
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p>Use our powerful search tools to find exactly what you need.</p>
-            <Button className="mt-4" asChild>
-              <Link to="/search">Advanced Search</Link>
+            <p>Share your knowledge and help grow the domain network.</p>
+            <Button className="mt-4 w-full" variant="outline" asChild>
+              <Link to="/contribute">Start Contributing</Link>
             </Button>
           </CardContent>
         </Card>
