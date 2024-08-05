@@ -37,14 +37,31 @@ export const createDomain = async (domain) => {
   return data[0];
 };
 
-export const addPerspective = async ({ domainId, name, description }) => {
-  const { data, error } = await supabase
+export const addPerspective = async ({ domainId, name, description, files }) => {
+  // Insert new perspective
+  const { data: perspectiveData, error: perspectiveError } = await supabase
     .from('perspectives')
     .insert([{ domain_id: domainId, name, description }])
     .select();
-  
-  if (error) throw error;
-  return data[0];
+
+  if (perspectiveError) throw perspectiveError;
+
+  // Insert files associated with the perspective
+  if (files && files.length > 0) {
+    const { data: fileData, error: fileError } = await supabase
+      .from('files')
+      .insert(
+        files.map((file) => ({
+          perspective_id: perspectiveData[0].id,
+          file_name: file.file_name,
+          file_url: file.file_url,
+        }))
+      );
+
+    if (fileError) throw fileError;
+  }
+
+  return perspectiveData[0];
 };
 
 export const updateDomain = async (id, updates) => {

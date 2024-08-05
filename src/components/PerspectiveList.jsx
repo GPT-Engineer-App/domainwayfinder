@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+import { supabase } from "../integrations/supabase";
+
 const PerspectiveList = ({ perspectives, onUpdatePerspective, onDeletePerspective }) => {
   const [editingId, setEditingId] = useState(null);
   const [editedPerspective, setEditedPerspective] = useState(null);
@@ -42,6 +44,25 @@ const PerspectiveList = ({ perspectives, onUpdatePerspective, onDeletePerspectiv
               <p className="mb-2">{perspective.description}</p>
               <Button onClick={() => handleEditClick(perspective)} className="mr-2">Edit</Button>
               <Button onClick={() => onDeletePerspective(perspective.id)} variant="destructive">Delete</Button>
+              {perspective.files && perspective.files.length > 0 && (
+                <div className="mt-2">
+                  <h4 className="font-semibold">Files:</h4>
+                  <ul>
+                    {perspective.files.map((file) => (
+                      <li key={file.id}>
+                        <a
+                          href={`${supabase.storage.from('perspectives').getPublicUrl(file.file_url).data.publicUrl}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          {file.file_name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </>
           )}
         </div>
