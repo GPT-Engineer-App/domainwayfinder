@@ -7,55 +7,9 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 
 import React from "react";
 export const queryClient = new QueryClient();
-
 export function SupabaseProvider({ children }) {
-  return React.createElement(QueryClientProvider, { client: queryClient }, children);
+    return React.createElement(QueryClientProvider, { client: queryClient }, children);
 }
-
-export const uploadFile = async (file, bucketName, filePath) => {
-  const { data, error } = await supabase.storage
-    .from(bucketName)
-    .upload(filePath, file);
-
-  if (error) {
-    console.error('Error uploading file:', error);
-    return null;
-  }
-
-  return data.path;
-};
-
-export const getFileUrl = (bucketName, filePath) => {
-  return supabase.storage
-    .from(bucketName)
-    .getPublicUrl(filePath).data.publicUrl;
-};
-
-export const downloadFile = async (bucketName, filePath) => {
-  const { data, error } = await supabase.storage
-    .from(bucketName)
-    .download(filePath);
-
-  if (error) {
-    console.error('Error downloading file:', error);
-    return null;
-  }
-
-  return data;
-};
-
-export const deleteFile = async (bucketName, filePath) => {
-  const { error } = await supabase.storage
-    .from(bucketName)
-    .remove([filePath]);
-
-  if (error) {
-    console.error('Error deleting file:', error);
-    return false;
-  }
-
-  return true;
-};
 
 const fromSupabase = async (query) => {
     const { data, error } = await query;
@@ -65,60 +19,115 @@ const fromSupabase = async (query) => {
 
 /* supabase integration types
 
+### perspective_files
+
+| name           | type                     | format | required |
+|----------------|--------------------------|--------|----------|
+| id             | bigint                   | number | true     |
+| perspective_id | integer                  | number | true     |
+| file_name      | text                     | string | true     |
+| file_url       | text                     | string | true     |
+| uploaded_at    | timestamp with time zone | string | false    |
+
 ### perspectives
 
-| name      | type   | format | required |
-|-----------|--------|--------|----------|
-| id        | int8   | number | true     |
-| domain_id | int8   | number | false    |
-| name      | text   | string | false    |
-| data      | jsonb  | json   | false    |
+| name        | type                     | format | required |
+|-------------|--------------------------|--------|----------|
+| id          | bigint                   | number | true     |
+| domain_id   | integer                  | number | true     |
+| name        | text                     | string | true     |
+| description | text                     | string | false    |
+| created_at  | timestamp with time zone | string | false    |
+| updated_at  | timestamp with time zone | string | false    |
+| created_by  | integer                  | number | false    |
+| views       | integer                  | number | false    |
 
 ### users
 
-| name                 | type                    | format   | required |
-|----------------------|-------------------------|----------|----------|
-| id                   | int8                    | number   | true     |
-| username             | text                    | string   | true     |
-| email                | text                    | string   | true     |
-| password_hash        | text                    | string   | true     |
-| first_name           | text                    | string   | false    |
-| last_name            | text                    | string   | false    |
-| avatar_url           | text                    | string   | false    |
-| bio                  | text                    | string   | false    |
-| date_of_birth        | timestamp with time zone| string   | false    |
-| phone_number         | text                    | string   | false    |
-| role                 | text                    | string   | false    |
-| status               | text                    | string   | false    |
-| language_preference  | text                    | string   | false    |
-| timezone             | text                    | string   | false    |
-| two_factor_enabled   | boolean                 | boolean  | false    |
-| last_login           | timestamp with time zone| string   | false    |
-| failed_login_attempts| integer                 | number   | false    |
-| reset_token          | text                    | string   | false    |
-| friends              | uuid[]                  | array    | false    |
-| following            | uuid[]                  | array    | false    |
-| followers            | uuid[]                  | array    | false    |
-| preferences          | jsonb                   | json     | false    |
-| created_at           | timestamp with time zone| string   | false    |
-| updated_at           | timestamp with time zone| string   | false    |
+| name                 | type                     | format  | required |
+|----------------------|--------------------------|---------|----------|
+| id                   | bigint                   | number  | true     |
+| username             | text                     | string  | true     |
+| email                | text                     | string  | true     |
+| password_hash        | text                     | string  | true     |
+| first_name           | text                     | string  | false    |
+| last_name            | text                     | string  | false    |
+| avatar_url           | text                     | string  | false    |
+| bio                  | text                     | string  | false    |
+| date_of_birth        | timestamp with time zone | string  | false    |
+| phone_number         | text                     | string  | false    |
+| role                 | text                     | string  | false    |
+| status               | text                     | string  | false    |
+| language_preference  | text                     | string  | false    |
+| timezone             | text                     | string  | false    |
+| two_factor_enabled   | boolean                  | boolean | false    |
+| last_login           | timestamp with time zone | string  | false    |
+| failed_login_attempts| integer                  | number  | false    |
+| reset_token          | text                     | string  | false    |
+| friends              | uuid[]                   | array   | false    |
+| following            | uuid[]                   | array   | false    |
+| followers            | uuid[]                   | array   | false    |
+| preferences          | jsonb                    | object  | false    |
+| created_at           | timestamp with time zone | string  | false    |
+| updated_at           | timestamp with time zone | string  | false    |
 
 ### domains
 
-| name         | type  | format | required |
-|--------------|-------|--------|----------|
-| id           | int8  | number | true     |
-| name         | text  | string | false    |
-| type         | text  | string | false    |
-| description  | text  | string | false    |
-| perspectives | jsonb | json   | false    |
+| name         | type   | format | required |
+|--------------|--------|--------|----------|
+| id           | bigint | number | true     |
+| name         | text   | string | false    |
+| type         | text   | string | false    |
+| description  | text   | string | false    |
+| perspectives | jsonb  | object | false    |
 
 */
 
-// Hooks for perspectives
+// Perspective Files Hooks
+export const usePerspectiveFiles = () => useQuery({
+    queryKey: ['perspective_files'],
+    queryFn: () => fromSupabase(supabase.from('perspective_files').select('*')),
+});
+
+export const useAddPerspectiveFile = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (newFile) => fromSupabase(supabase.from('perspective_files').insert([newFile])),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['perspective_files']);
+        },
+    });
+};
+
+export const useUpdatePerspectiveFile = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, updates }) => fromSupabase(supabase.from('perspective_files').update(updates).eq('id', id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['perspective_files']);
+        },
+    });
+};
+
+export const useDeletePerspectiveFile = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id) => fromSupabase(supabase.from('perspective_files').delete().eq('id', id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries(['perspective_files']);
+        },
+    });
+};
+
+// Perspectives Hooks
 export const usePerspectives = () => useQuery({
     queryKey: ['perspectives'],
     queryFn: () => fromSupabase(supabase.from('perspectives').select('*')),
+});
+
+export const usePerspective = (id) => useQuery({
+    queryKey: ['perspectives', id],
+    queryFn: () => fromSupabase(supabase.from('perspectives').select('*').eq('id', id).single()),
 });
 
 export const useAddPerspective = () => {
@@ -126,7 +135,7 @@ export const useAddPerspective = () => {
     return useMutation({
         mutationFn: (newPerspective) => fromSupabase(supabase.from('perspectives').insert([newPerspective])),
         onSuccess: () => {
-            queryClient.invalidateQueries('perspectives');
+            queryClient.invalidateQueries(['perspectives']);
         },
     });
 };
@@ -136,7 +145,7 @@ export const useUpdatePerspective = () => {
     return useMutation({
         mutationFn: ({ id, updates }) => fromSupabase(supabase.from('perspectives').update(updates).eq('id', id)),
         onSuccess: () => {
-            queryClient.invalidateQueries('perspectives');
+            queryClient.invalidateQueries(['perspectives']);
         },
     });
 };
@@ -146,15 +155,20 @@ export const useDeletePerspective = () => {
     return useMutation({
         mutationFn: (id) => fromSupabase(supabase.from('perspectives').delete().eq('id', id)),
         onSuccess: () => {
-            queryClient.invalidateQueries('perspectives');
+            queryClient.invalidateQueries(['perspectives']);
         },
     });
 };
 
-// Hooks for users
+// Users Hooks
 export const useUsers = () => useQuery({
     queryKey: ['users'],
     queryFn: () => fromSupabase(supabase.from('users').select('*')),
+});
+
+export const useUser = (id) => useQuery({
+    queryKey: ['users', id],
+    queryFn: () => fromSupabase(supabase.from('users').select('*').eq('id', id).single()),
 });
 
 export const useAddUser = () => {
@@ -162,7 +176,7 @@ export const useAddUser = () => {
     return useMutation({
         mutationFn: (newUser) => fromSupabase(supabase.from('users').insert([newUser])),
         onSuccess: () => {
-            queryClient.invalidateQueries('users');
+            queryClient.invalidateQueries(['users']);
         },
     });
 };
@@ -172,7 +186,7 @@ export const useUpdateUser = () => {
     return useMutation({
         mutationFn: ({ id, updates }) => fromSupabase(supabase.from('users').update(updates).eq('id', id)),
         onSuccess: () => {
-            queryClient.invalidateQueries('users');
+            queryClient.invalidateQueries(['users']);
         },
     });
 };
@@ -182,15 +196,20 @@ export const useDeleteUser = () => {
     return useMutation({
         mutationFn: (id) => fromSupabase(supabase.from('users').delete().eq('id', id)),
         onSuccess: () => {
-            queryClient.invalidateQueries('users');
+            queryClient.invalidateQueries(['users']);
         },
     });
 };
 
-// Hooks for domains
+// Domains Hooks
 export const useDomains = () => useQuery({
     queryKey: ['domains'],
     queryFn: () => fromSupabase(supabase.from('domains').select('*')),
+});
+
+export const useDomain = (id) => useQuery({
+    queryKey: ['domains', id],
+    queryFn: () => fromSupabase(supabase.from('domains').select('*').eq('id', id).single()),
 });
 
 export const useAddDomain = () => {
@@ -198,7 +217,7 @@ export const useAddDomain = () => {
     return useMutation({
         mutationFn: (newDomain) => fromSupabase(supabase.from('domains').insert([newDomain])),
         onSuccess: () => {
-            queryClient.invalidateQueries('domains');
+            queryClient.invalidateQueries(['domains']);
         },
     });
 };
@@ -208,7 +227,7 @@ export const useUpdateDomain = () => {
     return useMutation({
         mutationFn: ({ id, updates }) => fromSupabase(supabase.from('domains').update(updates).eq('id', id)),
         onSuccess: () => {
-            queryClient.invalidateQueries('domains');
+            queryClient.invalidateQueries(['domains']);
         },
     });
 };
@@ -218,7 +237,7 @@ export const useDeleteDomain = () => {
     return useMutation({
         mutationFn: (id) => fromSupabase(supabase.from('domains').delete().eq('id', id)),
         onSuccess: () => {
-            queryClient.invalidateQueries('domains');
+            queryClient.invalidateQueries(['domains']);
         },
     });
 };
