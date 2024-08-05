@@ -56,8 +56,6 @@ export const deleteFile = async (bucketName, filePath) => {
 
   return true;
 };
-    return React.createElement(QueryClientProvider, { client: queryClient }, children);
-}
 
 const fromSupabase = async (query) => {
     const { data, error } = await query;
