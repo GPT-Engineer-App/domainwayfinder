@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import ProfileReviewTable from "../components/ProfileReviewTable";
 
 const UserPage = () => {
   const { id } = useParams();
@@ -64,12 +65,10 @@ const UserPage = () => {
                   className="mt-1"
                 />
               </div>
+              {/* Add more fields for editing here */}
             </>
           ) : (
-            <>
-              <p className="mb-2"><strong>Username:</strong> {user.username}</p>
-              <p className="mb-2"><strong>Email:</strong> {user.email}</p>
-            </>
+            <ProfileReviewTable user={user} />
           )}
         </CardContent>
         <CardFooter>
