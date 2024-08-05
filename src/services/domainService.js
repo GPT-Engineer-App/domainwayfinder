@@ -50,50 +50,19 @@ export const createDomain = async (domain) => {
   return data[0];
 };
 
-export const addPerspective = async ({ domainId, name, description, files, createdBy }) => {
-  // Insert new perspective
-  const { data: perspectiveData, error: perspectiveError } = await supabase
-    .from('perspectives')
-    .insert([{ domain_id: domainId, name, description, created_by: createdBy }])
+export const addDomainType = async ({ domainId, name, description, createdBy }) => {
+  const { data, error } = await supabase
+    .from('domains')
+    .update({ 
+      type: name,
+      description: description,
+      updated_by: createdBy
+    })
+    .eq('id', domainId)
     .select();
 
-  if (perspectiveError) throw perspectiveError;
-
-  // Insert files associated with the perspective
-  if (files && files.length > 0) {
-    const { data: fileData, error: fileError } = await supabase
-      .from('perspective_files')
-      .insert(
-        files.map((file) => ({
-          perspective_id: perspectiveData[0].id,
-          file_name: file.file_name,
-          file_url: file.file_url,
-        }))
-      );
-
-    if (fileError) throw fileError;
-  }
-
-  // Fetch the inserted perspective with its files
-  const { data: fullPerspectiveData, error: fullPerspectiveError } = await supabase
-    .from('perspectives')
-    .select(`
-      *,
-      files:perspective_files(*)
-    `)
-    .eq('id', perspectiveData[0].id)
-    .single();
-
-  if (fullPerspectiveError) throw fullPerspectiveError;
-
-  return fullPerspectiveData;
-};
-
-export const incrementPerspectiveViews = async (id) => {
-  const { data, error } = await supabase.rpc('increment_perspective_views', { perspective_id: id });
-  
   if (error) throw error;
-  return data;
+  return data[0];
 };
 
 export const updateDomain = async (id, updates) => {
@@ -116,22 +85,10 @@ export const deleteDomain = async (id) => {
   if (error) throw error;
 };
 
-export const updatePerspective = async (id, updates) => {
-  const { data, error } = await supabase
-    .from('perspectives')
-    .update(updates)
-    .eq('id', id)
-    .select();
-  
-  if (error) throw error;
-  return data[0];
+export const updateDomainType = async (id, updates) => {
+  return updateDomain(id, updates);
 };
 
-export const deletePerspective = async (id) => {
-  const { error } = await supabase
-    .from('perspectives')
-    .delete()
-    .eq('id', id);
-  
-  if (error) throw error;
+export const deleteDomainType = async (id) => {
+  return updateDomain(id, { type: null, description: null });
 };

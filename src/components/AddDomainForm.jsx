@@ -32,6 +32,7 @@ const formSchema = z.object({
   description: z.string().min(10, {
     message: "Description must be at least 10 characters.",
   }),
+  perspectives: z.array(z.string()).optional(),
 });
 
 const AddDomainForm = ({ onAddDomain, onCancel }) => {
@@ -88,6 +89,22 @@ const AddDomainForm = ({ onAddDomain, onCancel }) => {
               </Select>
               <FormDescription>
                 Choose the type that best describes your domain.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="perspectives"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Perspectives (Optional)</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter perspectives, separated by commas" {...field} onChange={(e) => field.onChange(e.target.value.split(',').map(item => item.trim()))} />
+              </FormControl>
+              <FormDescription>
+                Add perspectives related to this domain type, separated by commas.
               </FormDescription>
               <FormMessage />
             </FormItem>

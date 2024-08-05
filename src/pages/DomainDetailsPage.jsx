@@ -1,9 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchDomainById, updateDomain, deleteDomain, updatePerspective, deletePerspective, incrementDomainViews, addPerspective, incrementPerspectiveViews } from "../services/domainService";
-import PerspectiveList from "../components/PerspectiveList";
-import AddPerspectiveForm from "../components/AddPerspectiveForm";
-import FileUploadForm from "../components/FileUploadForm";
+import DomainTypeList from "../components/DomainTypeList";
+import AddDomainTypeForm from "../components/AddDomainTypeForm";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,35 +41,35 @@ const DomainDetailsPage = () => {
     },
   });
 
-  const updatePerspectiveMutation = useMutation({
-    mutationFn: ({ id, updates }) => updatePerspective(id, updates),
+  const updateDomainTypeMutation = useMutation({
+    mutationFn: ({ id, updates }) => updateDomainType(id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["domain", id] });
     },
     onError: (error) => {
-      console.error("Failed to update perspective:", error);
+      console.error("Failed to update domain type:", error);
       // Add toast notification for error
     },
   });
 
-  const deletePerspectiveMutation = useMutation({
-    mutationFn: deletePerspective,
+  const deleteDomainTypeMutation = useMutation({
+    mutationFn: deleteDomainType,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["domain", id] });
     },
     onError: (error) => {
-      console.error("Failed to delete perspective:", error);
+      console.error("Failed to delete domain type:", error);
       // Add toast notification for error
     },
   });
 
-  const addPerspectiveMutation = useMutation({
-    mutationFn: addPerspective,
+  const addDomainTypeMutation = useMutation({
+    mutationFn: addDomainType,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["domain", id] });
     },
     onError: (error) => {
-      console.error("Failed to add perspective:", error);
+      console.error("Failed to add domain type:", error);
       // Add toast notification for error
     },
   });
@@ -97,17 +96,17 @@ const DomainDetailsPage = () => {
     deleteDomainMutation.mutate(domain.id);
   };
 
-  const handleUpdatePerspective = (perspectiveId, updates) => {
-    updatePerspectiveMutation.mutate({ id: perspectiveId, updates }, {
+  const handleUpdateDomainType = (domainTypeId, updates) => {
+    updateDomainTypeMutation.mutate({ id: domainTypeId, updates }, {
       onSuccess: () => {
         // Add toast notification for success
       },
     });
   };
 
-  const handleDeletePerspective = (perspectiveId) => {
-    if (window.confirm("Are you sure you want to delete this perspective?")) {
-      deletePerspectiveMutation.mutate(perspectiveId, {
+  const handleDeleteDomainType = (domainTypeId) => {
+    if (window.confirm("Are you sure you want to delete this domain type?")) {
+      deleteDomainTypeMutation.mutate(domainTypeId, {
         onSuccess: () => {
           // Add toast notification for success
         },
@@ -115,19 +114,13 @@ const DomainDetailsPage = () => {
     }
   };
 
-  const handleAddPerspective = (newPerspective) => {
-    addPerspectiveMutation.mutate({ domainId: id, ...newPerspective }, {
+  const handleAddDomainType = (newDomainType) => {
+    addDomainTypeMutation.mutate({ domainId: id, ...newDomainType }, {
       onSuccess: (data) => {
         // Add toast notification for success
-        console.log("New perspective added:", data);
+        console.log("New domain type added:", data);
       },
     });
-  };
-
-  const handleFileUpload = (perspectiveId, files) => {
-    // Implement file upload logic here
-    console.log("Uploading files for perspective:", perspectiveId, files);
-    // You may want to create a new mutation for file uploads
   };
 
   return (
@@ -213,25 +206,17 @@ const DomainDetailsPage = () => {
       </Card>
       <Tabs defaultValue="perspectives" className="w-full">
         <TabsList>
-          <TabsTrigger value="perspectives">Perspectives</TabsTrigger>
+          <TabsTrigger value="domainTypes">Domain Types</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
-        <TabsContent value="perspectives">
-          <h2 className="text-2xl font-bold mb-4">Perspectives</h2>
-          <PerspectiveList
-            perspectives={domain.perspectives}
-            onUpdatePerspective={handleUpdatePerspective}
-            onDeletePerspective={handleDeletePerspective}
+        <TabsContent value="domainTypes">
+          <h2 className="text-2xl font-bold mb-4">Domain Types</h2>
+          <DomainTypeList
+            domainTypes={domain.domainTypes}
+            onUpdateDomainType={handleUpdateDomainType}
+            onDeleteDomainType={handleDeleteDomainType}
           />
-          <AddPerspectiveForm domainId={id} onAddPerspective={handleAddPerspective} />
-          {domain.perspectives.map((perspective) => (
-            <FileUploadForm
-              key={perspective.id}
-              domainId={id}
-              perspectiveId={perspective.id}
-              onFileUpload={(files) => handleFileUpload(perspective.id, files)}
-            />
-          ))}
+          <AddDomainTypeForm domainId={id} onAddDomainType={handleAddDomainType} />
         </TabsContent>
         <TabsContent value="analytics">
           <h2 className="text-2xl font-bold mb-4">Domain Analytics</h2>
