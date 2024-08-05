@@ -1,16 +1,15 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { SupabaseAuthProvider } from "./integrations/supabase/auth";
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import DomainDetailsPage from "./pages/DomainDetailsPage";
 import UserPage from "./pages/UserPage";
-
-const queryClient = new QueryClient();
+import LoginPage from "./pages/LoginPage";
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
+  <SupabaseAuthProvider>
     <TooltipProvider>
       <Toaster />
       <BrowserRouter>
@@ -21,12 +20,13 @@ const App = () => (
               <Route path="/" element={<HomePage />} />
               <Route path="/domain/:id" element={<DomainDetailsPage />} />
               <Route path="/user/:id" element={<UserPage />} />
+              <Route path="/login" element={<LoginPage />} />
             </Routes>
           </main>
         </div>
       </BrowserRouter>
     </TooltipProvider>
-  </QueryClientProvider>
+  </SupabaseAuthProvider>
 );
 
 export default App;
