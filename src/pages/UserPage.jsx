@@ -15,7 +15,7 @@ const UserPage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedUser, setEditedUser] = useState(null);
 
-  const { data: user, isLoading, isError } = useQuery({
+  const { data: user, isLoading, isError, refetch } = useQuery({
     queryKey: ["user", id],
     queryFn: () => fetchUser(id),
   });
@@ -48,7 +48,14 @@ const UserPage = () => {
   });
 
   if (isLoading) return <div className="text-center py-8">Loading user details...</div>;
-  if (isError) return <div className="text-center py-8 text-red-500">Error fetching user details</div>;
+  if (isError) return (
+    <div className="text-center py-8">
+      <p className="text-red-500 mb-4">Error fetching user details. Please try again later.</p>
+      <Button onClick={() => refetch()} className="bg-primary text-primary-foreground">
+        Retry
+      </Button>
+    </div>
+  );
 
   const handleEditClick = () => {
     setIsEditing(true);

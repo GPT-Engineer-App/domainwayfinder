@@ -30,7 +30,14 @@ const HomePage = () => {
   };
 
   if (isLoading) return <div className="text-center py-8">Loading domains...</div>;
-  if (isError) return <div className="text-center py-8 text-red-500">Error fetching domains</div>;
+  if (isError) return (
+    <div className="text-center py-8">
+      <p className="text-red-500 mb-4">Error fetching domains. Please try again later.</p>
+      <Button onClick={() => refetch()} className="bg-primary text-primary-foreground">
+        Retry
+      </Button>
+    </div>
+  );
 
   return (
     <div>
