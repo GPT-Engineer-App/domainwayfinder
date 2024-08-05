@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchDomainById, updateDomain, deleteDomain, updatePerspective, deletePerspective, incrementDomainViews, addPerspective, incrementPerspectiveViews } from "../services/domainService";
-import DomainTypeList from "../components/DomainTypeList";
+import DomainList from "../components/DomainList";
 import AddDomainTypeForm from "../components/AddDomainTypeForm";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -211,10 +211,10 @@ const DomainDetailsPage = () => {
         </TabsList>
         <TabsContent value="domainTypes">
           <h2 className="text-2xl font-bold mb-4">Domain Types</h2>
-          <DomainTypeList
-            domainTypes={domain.domainTypes}
-            onUpdateDomainType={handleUpdateDomainType}
-            onDeleteDomainType={handleDeleteDomainType}
+          <DomainList
+            domains={[domain]}
+            onUpdateDomain={handleUpdateDomainType}
+            onDeleteDomain={handleDeleteDomainType}
           />
           <AddDomainTypeForm domainId={id} onAddDomainType={handleAddDomainType} />
         </TabsContent>
