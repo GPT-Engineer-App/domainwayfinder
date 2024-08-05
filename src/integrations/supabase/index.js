@@ -7,7 +7,10 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 
 import React from "react";
 export const queryClient = new QueryClient();
+
 export function SupabaseProvider({ children }) {
+  return React.createElement(QueryClientProvider, { client: queryClient }, children);
+}
 
 export const uploadFile = async (file, bucketName, filePath) => {
   const { data, error } = await supabase.storage
