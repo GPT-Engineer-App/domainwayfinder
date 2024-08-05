@@ -15,6 +15,7 @@ const HomePage = () => {
   const { data: domains, isLoading, isError, refetch } = useQuery({
     queryKey: ["domains"],
     queryFn: fetchDomains,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const filteredDomains = domains?.filter(domain =>

@@ -18,11 +18,13 @@ const UserPage = () => {
   const { data: user, isLoading, isError, refetch } = useQuery({
     queryKey: ["user", id],
     queryFn: () => fetchUser(id),
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const updateUserMutation = useMutation({
     mutationFn: ({ id, updates }) => updateUser(id, updates),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", id] });
       setIsEditing(false);
     },
   });

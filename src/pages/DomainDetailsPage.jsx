@@ -22,6 +22,7 @@ const DomainDetailsPage = () => {
   const { data: domain, isLoading, isError } = useQuery({
     queryKey: ["domain", id],
     queryFn: () => fetchDomainById(id),
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   useEffect(() => {
@@ -33,7 +34,7 @@ const DomainDetailsPage = () => {
   const updateDomainMutation = useMutation({
     mutationFn: ({ id, updates }) => updateDomain(id, updates),
     onSuccess: () => {
-      queryClient.invalidateQueries(["domain", id]);
+      queryClient.invalidateQueries({ queryKey: ["domain", id] });
       setIsEditing(false);
     },
   });
@@ -41,6 +42,7 @@ const DomainDetailsPage = () => {
   const deleteDomainMutation = useMutation({
     mutationFn: deleteDomain,
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["domains"] });
       navigate("/");
     },
   });
@@ -48,14 +50,14 @@ const DomainDetailsPage = () => {
   const updatePerspectiveMutation = useMutation({
     mutationFn: ({ id, updates }) => updatePerspective(id, updates),
     onSuccess: () => {
-      queryClient.invalidateQueries(["domain", id]);
+      queryClient.invalidateQueries({ queryKey: ["domain", id] });
     },
   });
 
   const deletePerspectiveMutation = useMutation({
     mutationFn: deletePerspective,
     onSuccess: () => {
-      queryClient.invalidateQueries(["domain", id]);
+      queryClient.invalidateQueries({ queryKey: ["domain", id] });
     },
   });
 
@@ -86,7 +88,7 @@ const DomainDetailsPage = () => {
   const addPerspectiveMutation = useMutation({
     mutationFn: addPerspective,
     onSuccess: () => {
-      queryClient.invalidateQueries(["domain", id]);
+      queryClient.invalidateQueries({ queryKey: ["domain", id] });
     },
   });
 
