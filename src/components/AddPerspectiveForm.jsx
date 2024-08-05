@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
-import { supabase } from "../integrations/supabase";
+import { uploadFile } from "../integrations/supabase";
 
 const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {
   const [name, setName] = useState("");
@@ -19,18 +19,17 @@ const AddPerspectiveForm = ({ domainId, onAddPerspective }) => {
     e.preventDefault();
     
     const uploadedFiles = await Promise.all([...files].map(async (file) => {
-      const { data, error } = await supabase.storage
-        .from('perspectives')
-        .upload(`${domainId}/${name}/${file.name}`, file);
+      const filePath = `${domainId}/${name}/${file.name}`;
+      const uploadedPath = await uploadFile(file, 'perspectives', filePath);
 
-      if (error) {
-        console.error('Error uploading file:', error);
+      if (!uploadedPath) {
+        console.error('Error uploading file:', file.name);
         return null;
       }
 
       return {
         file_name: file.name,
-        file_url: data.path
+        file_url: uploadedPath
       };
     }));
 

@@ -8,6 +8,51 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 import React from "react";
 export const queryClient = new QueryClient();
 export function SupabaseProvider({ children }) {
+
+export const uploadFile = async (file, bucketName, filePath) => {
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .upload(filePath, file);
+
+  if (error) {
+    console.error('Error uploading file:', error);
+    return null;
+  }
+
+  return data.path;
+};
+
+export const getFileUrl = (bucketName, filePath) => {
+  return supabase.storage
+    .from(bucketName)
+    .getPublicUrl(filePath).data.publicUrl;
+};
+
+export const downloadFile = async (bucketName, filePath) => {
+  const { data, error } = await supabase.storage
+    .from(bucketName)
+    .download(filePath);
+
+  if (error) {
+    console.error('Error downloading file:', error);
+    return null;
+  }
+
+  return data;
+};
+
+export const deleteFile = async (bucketName, filePath) => {
+  const { error } = await supabase.storage
+    .from(bucketName)
+    .remove([filePath]);
+
+  if (error) {
+    console.error('Error deleting file:', error);
+    return false;
+  }
+
+  return true;
+};
     return React.createElement(QueryClientProvider, { client: queryClient }, children);
 }
 

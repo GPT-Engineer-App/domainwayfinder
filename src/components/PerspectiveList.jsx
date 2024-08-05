@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
-import { supabase } from "../integrations/supabase";
+import { getFileUrl } from "../integrations/supabase";
 
 const PerspectiveList = ({ perspectives, onUpdatePerspective, onDeletePerspective }) => {
   const [editingId, setEditingId] = useState(null);
@@ -51,7 +50,7 @@ const PerspectiveList = ({ perspectives, onUpdatePerspective, onDeletePerspectiv
                     {perspective.files.map((file) => (
                       <li key={file.id}>
                         <a
-                          href={`${supabase.storage.from('perspectives').getPublicUrl(file.file_url).data.publicUrl}`}
+                          href={getFileUrl('perspectives', file.file_url)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-500 hover:underline"
